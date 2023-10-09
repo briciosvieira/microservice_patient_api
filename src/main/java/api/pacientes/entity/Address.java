@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.Id;
 
 @Data
 @NoArgsConstructor
@@ -13,11 +12,15 @@ import org.springframework.data.annotation.Id;
 public class Address {
 
     private String street;
-    private String number;
-    private String  neigborhood;
-    private String county;
-    private String zipCode;
-    private String state;
 
+    private String number;
+
+    private String neighborhood;
+
+    private String county;
+
+    private String zipCode;
+
+    private String state;
 
 }

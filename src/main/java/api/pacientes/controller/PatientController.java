@@ -15,8 +15,15 @@ public class PatientController {
 
     @Autowired
     private PatientService patientService;
+
     @PostMapping
     public ResponseEntity<Patient> registerPatient(@RequestBody @Valid PatientDTO patientDTO){
         return ResponseEntity.created(null).body(patientService.registerPatient(patientDTO));
+    }
+
+    @PostMapping(value = "/mock-patients")
+    public ResponseEntity<Void> mockPatients() {
+        patientService.mockPatients();
+        return ResponseEntity.created(null).build();
     }
 }

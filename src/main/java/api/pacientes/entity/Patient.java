@@ -14,14 +14,19 @@ public class Patient {
 
     @Id
     private String id;
+
     private String firstName;
+
     private String lastName;
+
     private String cpf;
+
     private String gender;
+
     private String birthDate;
 
     private Contact contact;
-    private Address address;
 
+    private Address address;
 
 }
