@@ -3,16 +3,16 @@ package api.pacientes.service;
 import api.pacientes.entity.Address;
 import api.pacientes.entity.Contact;
 import api.pacientes.entity.Patient;
+import api.pacientes.exception.ResourceNotFoundException;
 import api.pacientes.repository.PatientRepository;
-import api.pacientes.service.dto.AddressDTO;
-import api.pacientes.service.dto.ContactDTO;
-import api.pacientes.service.dto.PatientDTO;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -21,33 +21,33 @@ public class PatientService {
     @Autowired
     private PatientRepository patientRepository;
 
-    public Patient registerPatient(PatientDTO patientDTO) {
+    public Patient registerPatient(Patient patient) {
         return patientRepository.insert(
                 Patient.builder()
-                        .firstName(patientDTO.getFirstName())
-                        .lastName(patientDTO.getLastName())
-                        .birthDate(patientDTO.getBirthDate())
-                        .gender(patientDTO.getGender())
-                        .cpf(patientDTO.getCpf())
+                        .firstName(patient.getFirstName())
+                        .lastName(patient.getLastName())
+                        .birthDate(patient.getBirthDate())
+                        .gender(patient.getGender())
+                        .cpf(patient.getCpf())
                         .address(Address.builder()
-                                .state(patientDTO.getAddress().getState())
-                                .county(patientDTO.getAddress().getCounty())
-                                .zipCode(patientDTO.getAddress().getZipCode())
-                                .street(patientDTO.getAddress().getStreet())
-                                .number(patientDTO.getAddress().getNumber())
-                                .neighborhood(patientDTO.getAddress().getNeighborhood())
+                                .state(patient.getAddress().getState())
+                                .county(patient.getAddress().getCounty())
+                                .zipCode(patient.getAddress().getZipCode())
+                                .street(patient.getAddress().getStreet())
+                                .number(patient.getAddress().getNumber())
+                                .neighborhood(patient.getAddress().getNeighborhood())
                                 .build())
                         .contact(Contact.builder()
-                                .telephone(patientDTO.getContact().getTelephone())
-                                .whatsapp(patientDTO.getContact().getWhatsapp())
-                                .email(patientDTO.getContact().getEmail())
+                                .telephone(patient.getContact().getTelephone())
+                                .whatsapp(patient.getContact().getWhatsapp())
+                                .email(patient.getContact().getEmail())
                                 .build())
                         .build()
         );
     }
 
     public void mockPatients() {
-        List<PatientDTO> mockPatientList = Arrays.asList(
+        List<Patient> mockPatientList = Arrays.asList(
                 createMockPatient("João", "Silva", "1990-01-01", "M", "617.442.440-57", "SP", "São Paulo", "01000-000", "Rua A", "1", "Centro", "111111111", "911111111", "joao.silva@email.com"),
                 createMockPatient("Maria", "Oliveira", "1992-02-02", "F", "628.367.830-01", "RJ", "Rio de Janeiro", "02000-000", "Rua B", "2", "Leste", "222222222", "922222222", "maria.oliveira@email.com"),
                 createMockPatient("Pedro", "Fernandes", "1994-03-03", "M", "991.688.770-56", "MG", "Belo Horizonte", "03000-000", "Rua C", "3", "Norte", "333333333", "933333333", "pedro.fernandes@email.com"),
@@ -57,17 +57,17 @@ public class PatientService {
         mockPatientList.forEach(this::registerPatient);
     }
 
-    private PatientDTO createMockPatient(String firstName, String lastName, String birthDate, String gender, String cpf,
+    private Patient createMockPatient(String firstName, String lastName, String birthDate, String gender, String cpf,
                                          String state, String county, String zipCode, String street, String number,
                                          String neighborhood, String telephone, String whatsapp, String email) {
-        return PatientDTO.builder()
+        return Patient.builder()
                 .firstName(firstName)
                 .lastName(lastName)
                 .birthDate(birthDate)
                 .gender(gender)
                 .cpf(cpf)
                 .address(
-                    AddressDTO.builder()
+                    Address.builder()
                         .state(state)
                         .county(county)
                         .zipCode(zipCode)
@@ -76,11 +76,34 @@ public class PatientService {
                         .neighborhood(neighborhood)
                         .build()
                 ).contact(
-                    ContactDTO.builder()
+                    Contact.builder()
                         .telephone(telephone)
                         .whatsapp(whatsapp)
                         .email(email)
                         .build()
                 ).build();
+    }
+
+    public List<Patient> getAll() {
+        return patientRepository.findAll();
+    }
+
+    public void delete(String id) throws ResourceNotFoundException {
+        findById(id);
+        patientRepository.deleteById(id);
+    }
+
+    public Patient update(String id, Patient newPatient) throws ResourceNotFoundException {
+        Patient patient = findById(id);
+        BeanUtils.copyProperties(newPatient,patient);
+        return patientRepository.save(patient);
+    }
+
+    public Patient findById(String id) throws ResourceNotFoundException {
+        Optional<Patient> patientOptional = patientRepository.findById(id);
+        if (patientOptional.isEmpty()){
+            throw new ResourceNotFoundException();
+        }
+        return patientOptional.get();
     }
 }
