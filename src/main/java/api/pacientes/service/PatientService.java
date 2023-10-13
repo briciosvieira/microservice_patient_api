@@ -84,26 +84,38 @@ public class PatientService {
                 ).build();
     }
 
+    @Transactional(readOnly = true)
     public List<Patient> getAll() {
         return patientRepository.findAll();
     }
 
-    public void delete(String id) throws ResourceNotFoundException {
-        findById(id);
-        patientRepository.deleteById(id);
+    @Transactional(readOnly = true)
+    public Patient findById(String id) throws ResourceNotFoundException {
+        Optional<Patient> patientOptional = getPatientOptionalById(id);
+        verifyIfPatientIsEmpty(patientOptional);
+        return patientOptional.get();
     }
 
     public Patient update(String id, Patient newPatient) throws ResourceNotFoundException {
-        Patient patient = findById(id);
-        BeanUtils.copyProperties(newPatient,patient);
-        return patientRepository.save(patient);
+        Optional<Patient> patientOptional = getPatientOptionalById(id);
+        verifyIfPatientIsEmpty(patientOptional);
+        BeanUtils.copyProperties(newPatient, patientOptional.get());
+        return patientRepository.save(patientOptional.get());
     }
 
-    public Patient findById(String id) throws ResourceNotFoundException {
-        Optional<Patient> patientOptional = patientRepository.findById(id);
+    public void delete(String id) throws ResourceNotFoundException {
+        Optional<Patient> patientOptional = getPatientOptionalById(id);
+        verifyIfPatientIsEmpty(patientOptional);
+        patientRepository.delete(patientOptional.get());
+    }
+
+    private Optional<Patient> getPatientOptionalById(String id) {
+        return patientRepository.findById(id);
+    }
+
+    private void verifyIfPatientIsEmpty(Optional<Patient> patientOptional) throws ResourceNotFoundException {
         if (patientOptional.isEmpty()){
             throw new ResourceNotFoundException();
         }
-        return patientOptional.get();
     }
 }

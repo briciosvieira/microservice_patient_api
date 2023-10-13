@@ -13,22 +13,22 @@ import javax.validation.constraints.NotEmpty;
 @Builder
 public class Address {
 
-    @NotEmpty
+    @NotEmpty(message = "O número do endereço do paciente não foi informado")
     private String number;
 
-    @NotEmpty
+    @NotEmpty(message = "O bairro do endereço do paciente não foi informado")
     private String neighborhood;
 
-    @NotEmpty
+    @NotEmpty(message = "O bairro do endereço do paciente não foi informado")
     private String county;
 
-    @NotEmpty
+    @NotEmpty(message = "O país do endereço do paciente não foi informado")
     private String zipCode;
 
-    @NotEmpty
+    @NotEmpty(message = "O estado do endereço do paciente não foi informado")
     private String state;
 
-    @NotEmpty
+    @NotEmpty(message = "O rua do endereço do paciente não foi informado")
     private String street;
 
 }

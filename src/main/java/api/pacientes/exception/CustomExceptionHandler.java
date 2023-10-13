@@ -11,26 +11,26 @@ import java.util.Map;
 
 @ControllerAdvice
 public class CustomExceptionHandler {
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public  ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex) {
+    public ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex) {
         Map<String, Object> body = new HashMap<>();
-        body.put("status", HttpStatus.BAD_REQUEST.value());
 
         Map<String, String> errors = new HashMap<>();
         ex.getBindingResult().getFieldErrors().forEach(
                 fieldError -> errors.put(fieldError.getField(), fieldError.getDefaultMessage())
         );
 
-        body.put("errors", errors);
+        body.put("mensagem", errors);
 
         return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(ResourceNotFoundException.class)
-    public static ResponseEntity<Object> handleResourceNotFound(ResourceNotFoundException ex) {
+    public ResponseEntity<Object> handleResourceNotFound(ResourceNotFoundException ex) {
         Map<String, Object> body = new HashMap<>();
-        body.put("status", HttpStatus.NOT_FOUND.value());
-        body.put("error", ex.getMessage());
+
+        body.put("mensagem", ex.getMessage());
 
         return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
     }

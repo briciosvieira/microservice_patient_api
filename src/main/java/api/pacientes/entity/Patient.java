@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.validator.constraints.UniqueElements;
 import org.hibernate.validator.constraints.br.CPF;
 import org.springframework.data.annotation.Id;
 
@@ -19,26 +20,27 @@ public class Patient {
     @Id
     private String id;
 
-    @NotEmpty
+    @NotEmpty(message = "O nome do paciente não foi informado")
     private String firstName;
 
-    @NotEmpty
+    @NotEmpty(message = "O sobrenome do paciente não foi informado")
     private String lastName;
 
-    @NotEmpty
+    @NotEmpty(message = "O gênero do paciente não foi informado")
     private String gender;
 
-    @CPF
-    @NotEmpty
+    @CPF(message = "O CPF informado está inválido")
+    @NotEmpty(message = "O CPF do paciente não foi informado")
+    @UniqueElements
     private String cpf;
 
-    @NotEmpty
+    @NotEmpty(message = "A data de nascimento do paciente não foi informada")
     private String birthDate;
 
-    @NotNull
+    @NotNull(message = "Insira ao menos dos 3 campos de contato. Telefone, whatsapp ou e-mail")
     private Contact contact;
 
-    @NotNull
+    @NotNull(message = "O endereço do cliente não foi informado")
     private Address address;
 
 }

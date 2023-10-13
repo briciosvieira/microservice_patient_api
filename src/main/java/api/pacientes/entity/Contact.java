@@ -17,7 +17,7 @@ public class Contact {
 
     private String whatsapp;
 
-    @Email
+    @Email(message = "Insira um e-mail válido")
     private String email;
 
 }
