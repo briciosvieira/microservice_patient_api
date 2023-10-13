@@ -43,4 +43,13 @@ public class Patient {
     @NotNull(message = "O endereço do cliente não foi informado")
     private Address address;
 
+    public Patient(String firstName, String lastName, String gender, String cpf, String birthDate, Contact contact, Address address) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.gender = gender;
+        this.cpf = cpf;
+        this.birthDate = birthDate;
+        this.contact = contact;
+        this.address = address;
+    }
 }
