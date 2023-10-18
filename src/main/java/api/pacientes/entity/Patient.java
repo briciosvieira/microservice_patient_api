@@ -31,7 +31,7 @@ public class Patient {
 
     @CPF(message = "O CPF informado está inválido")
     @NotEmpty(message = "O CPF do paciente não foi informado")
-    @UniqueElements
+//    @UniqueElements
     private String cpf;
 
     @NotEmpty(message = "A data de nascimento do paciente não foi informada")
