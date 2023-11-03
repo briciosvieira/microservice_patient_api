@@ -64,31 +64,33 @@ public class PatientService {
 
     @Transactional(readOnly = true)
     public Patient findById(String id) throws ResourceNotFoundException {
-        Optional<Patient> patientOptional = getPatientOptionalById(id);
-        verifyIfPatientIsEmpty(patientOptional);
-        return patientOptional.get();
+        return getPatientOptionalById(id);
     }
 
     public Patient update(String id, Patient newPatient) throws ResourceNotFoundException {
-        Optional<Patient> patientOptional = getPatientOptionalById(id);
-        verifyIfPatientIsEmpty(patientOptional);
-        BeanUtils.copyProperties(newPatient, patientOptional.get());
-        return patientRepository.save(patientOptional.get());
+        Patient patient = getPatientOptionalById(id);
+        patient.setGender(newPatient.getGender());
+        patient.setAddress(newPatient.getAddress());
+        patient.setContact(newPatient.getContact());
+        patient.setCpf(newPatient.getCpf());
+        patient.setBirthDate(newPatient.getBirthDate());
+        patient.setFirstName(newPatient.getFirstName());
+        patient.setLastName(newPatient.getLastName());
+
+        return patientRepository.save(patient);
     }
 
     public void delete(String id) throws ResourceNotFoundException {
-        Optional<Patient> patientOptional = getPatientOptionalById(id);
-        verifyIfPatientIsEmpty(patientOptional);
-        patientRepository.delete(patientOptional.get());
+        patientRepository.delete(getPatientOptionalById(id));
     }
 
-    private Optional<Patient> getPatientOptionalById(String id) {
-        return patientRepository.findById(id);
-    }
+    private Patient getPatientOptionalById(String id) throws ResourceNotFoundException {
+        Optional<Patient> patientOptional = patientRepository.findById(id);
 
-    private void verifyIfPatientIsEmpty(Optional<Patient> patientOptional) throws ResourceNotFoundException {
         if (patientOptional.isEmpty()){
             throw new ResourceNotFoundException();
         }
+
+        return patientOptional.get();
     }
 }
