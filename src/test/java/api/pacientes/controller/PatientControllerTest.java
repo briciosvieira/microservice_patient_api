@@ -13,20 +13,19 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-import java.lang.reflect.Array;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-public class PatientControllerTest {
+class PatientControllerTest {
     @Autowired
     MockMvc mockMvc;
     @MockBean
@@ -34,7 +33,7 @@ public class PatientControllerTest {
 
     @Test
     @DisplayName("Deve retornar uma lista de pacientes cadastrados.")
-    public void testObterTodos() throws Exception {
+    void testObterTodos() throws Exception {
         // Arrange
         Patient patient1 = new Patient();
         patient1.setFirstName("Natã");
@@ -65,7 +64,7 @@ public class PatientControllerTest {
 
     @Test
     @DisplayName("Deve retornar um Array vazio quando busca não retornar pacientes")
-    public void testObterListaEmBranco() throws Exception {
+    void testObterListaEmBranco() throws Exception {
         List<Patient> patients = new ArrayList<>();
 
         Mockito.when(patientService.getAll()).thenReturn(patients);
@@ -80,7 +79,7 @@ public class PatientControllerTest {
 
     @Test
     @DisplayName("Deve retornar um Array vazio quando busca não retornar pacientes")
-    public void testObterPeloId() throws Exception, ResourceNotFoundException {
+    void testObterPeloId() throws Exception, ResourceNotFoundException {
         Patient patient1 = new Patient();
         patient1.setId("teste");
         patient1.setFirstName("Natã");
@@ -102,7 +101,7 @@ public class PatientControllerTest {
 
     @Test
     @DisplayName("Deve retornar uma ResourceNotFoundException ao buscar um id inexistente")
-    public void testObterPorUmIdInvalido() throws Exception, ResourceNotFoundException {
+    void testObterPorUmIdInvalido() throws Exception, ResourceNotFoundException {
         String id = "teste";
         Mockito.when(patientService.findById(id)).thenThrow(ResourceNotFoundException.class);
         mockMvc.perform(MockMvcRequestBuilders.get("/patient/" + id))
