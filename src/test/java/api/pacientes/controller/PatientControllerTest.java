@@ -116,7 +116,7 @@ class PatientControllerTest {
 
     @Test
     @DisplayName("Deve registrar um novo paciente")
-    void testRegistrarPatient() throws Exception {
+    void testRegisterPatient() throws Exception {
         Patient patient = new Patient();
         patient.setFirstName("Ivan");
         patient.setLastName("Romão");
@@ -166,4 +166,59 @@ class PatientControllerTest {
         verify(patientService, times(1)).registerPatient(Mockito.any(Patient.class));
     }
 
+
+    @Test
+    @DisplayName("Deve atualizar um paciente")
+    void testUpdatePatient() throws Exception, ResourceNotFoundException {
+        Patient patient = new Patient();
+        patient.setId("testeId");
+        patient.setFirstName("Ivan");
+        patient.setLastName("Romão");
+        patient.setBirthDate(String.valueOf(LocalDate.of(2023, 3, 10)));
+        patient.setGender("M");
+        patient.setCpf("76824616672");
+
+        Address address = new Address();
+        address.setNumber("123");
+        address.setNeighborhood("Sample Neighborhood");
+        address.setCounty("Sample County");
+        address.setZipCode("12345");
+        address.setState("Sample State");
+        address.setStreet("Sample Street");
+
+        Contact contact = new Contact();
+        contact.setTelephone("(71) 9456-7890");
+        contact.setWhatsapp("(71) 9456-7890");
+        contact.setEmail("test@example.com");
+
+        patient.setAddress(address);
+        patient.setContact(contact);
+        Mockito.when(patientService.update(Mockito.anyString(),Mockito.any(Patient.class))).thenReturn(patient);
+
+        mockMvc.perform(MockMvcRequestBuilders.put("/patient/{id}", "testId")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(new ObjectMapper().writeValueAsString(patient)))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.firstName").value(patient.getFirstName()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.lastName").value(patient.getLastName()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.cpf").value(patient.getCpf()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.gender").value(patient.getGender()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.birthDate").value(patient.getBirthDate()))
+
+                .andExpect(MockMvcResultMatchers.jsonPath("$.address.street").value(address.getStreet()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.address.county").value(address.getCounty()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.address.state").value(address.getState()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.address.number").value(address.getNumber()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.address.neighborhood").value(address.getNeighborhood()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.address.zipCode").value(address.getZipCode()))
+
+                .andExpect(MockMvcResultMatchers.jsonPath("$.contact.whatsapp").value(contact.getWhatsapp()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.contact.telephone").value(contact.getTelephone()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.contact.email").value(contact.getEmail()));
+
+        verify(patientService, times(1)).update(Mockito.eq("testId"), Mockito.any(Patient.class));
+
+
+    }
 }
