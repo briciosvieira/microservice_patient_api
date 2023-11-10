@@ -26,6 +26,7 @@ import java.util.List;
 
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -112,6 +113,23 @@ class PatientControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isNotFound());
 
         verify(patientService, times(1)).findById(id);
+    }
+    @Test
+    @DisplayName("Deve retornar valor vazio ao excluir um paciente")
+    void testExcluirPaciente() throws Exception, ResourceNotFoundException {
+        Patient patient = new Patient();
+        patient.setId("teste");
+        patient.setFirstName("Gabriel");
+        patient.setLastName("Moreira");
+        patient.setBirthDate(String.valueOf(LocalDate.of(1999, 8, 17)));
+        patient.setGender("M");
+
+        Mockito.doNothing().when(patientService).delete(patient.getId());
+
+        mockMvc.perform(delete("/patient/{id}", patient.getId()))
+                .andExpect(MockMvcResultMatchers.status().isNoContent());
+
+        verify(patientService, times(1)).delete(patient.getId());
     }
 
     @Test
