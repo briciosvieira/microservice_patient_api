@@ -35,7 +35,6 @@ public class Patient extends DatabaseObject {
 
     @CPF(message = "O CPF informado está inválido")
     @NotEmpty(message = "O CPF do paciente não foi informado")
-//    @UniqueElements
     private String cpf;
 
     @NotNull(message = "A data de nascimento do paciente não foi informada")
