@@ -5,11 +5,11 @@ import api.pacientes.entity.Contact;
 import api.pacientes.entity.Patient;
 import api.pacientes.exception.ResourceNotFoundException;
 import api.pacientes.repository.PatientRepository;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -48,18 +48,18 @@ public class PatientService {
 
     public void mockPatients() {
         List<Patient> mockPatientList = Arrays.asList(
-                new Patient("João", "Silva", "M", "617.442.440-57", "1990-01-01",  new Contact( "111111111", "911111111", "joao.silva@email.com"), new Address("1", "Centro", "São Paulo", "01001-001", "SP", "Rua A")),
-                new Patient("Maria", "Oliveira", "F", "934.735.220-90", "1992-02-12", new Contact("111111112", "911111112", "maria.oliveira@email.com"), new Address("2", "Centro", "São Paulo", "01002-001", "SP", "Rua B")),
-                new Patient("Carlos", "Fernandes", "M", "080.624.135-78", "1989-03-23", new Contact("111111113", "911111113", "carlos.fernandes@email.com"), new Address("3", "Centro", "São Paulo", "01003-001", "SP", "Rua C")),
-                new Patient("Ana", "Martins", "F", "859.048.950-70", "1991-04-14", new Contact("111111114", "911111114", "ana.martins@email.com"), new Address("4", "Centro", "São Paulo", "01001-004", "SP", "Rua D")),
-                new Patient("Roberto", "Alves", "M", "428.389.460-56", "1993-05-15", new Contact("111111115", "911111115", "roberto.alves@email.com"), new Address("5", "Centro", "São Paulo", "01005-001", "SP", "Rua E"))
+                new Patient("João", "Silva", "M", "617.442.440-57", LocalDate.of(1990, 01, 01),  new Contact( "111111111", "911111111", "joao.silva@email.com"), new Address("1", "Centro", "São Paulo", "01001-001", "SP", "Rua A")),
+                new Patient("Maria", "Oliveira", "F", "934.735.220-90", LocalDate.of(1992, 02, 12), new Contact("111111112", "911111112", "maria.oliveira@email.com"), new Address("2", "Centro", "São Paulo", "01002-001", "SP", "Rua B")),
+                new Patient("Carlos", "Fernandes", "M", "080.624.135-78", LocalDate.of(1989, 03, 23), new Contact("111111113", "911111113", "carlos.fernandes@email.com"), new Address("3", "Centro", "São Paulo", "01003-001", "SP", "Rua C")),
+                new Patient("Ana", "Martins", "F", "859.048.950-70", LocalDate.of(1991, 04, 14), new Contact("111111114", "911111114", "ana.martins@email.com"), new Address("4", "Centro", "São Paulo", "01001-004", "SP", "Rua D")),
+                new Patient("Roberto", "Alves", "M", "428.389.460-56", LocalDate.of(1993, 05, 15), new Contact("111111115", "911111115", "roberto.alves@email.com"), new Address("5", "Centro", "São Paulo", "01005-001", "SP", "Rua E"))
         );
         mockPatientList.forEach(this::registerPatient);
     }
 
     @Transactional(readOnly = true)
     public List<Patient> getAll() {
-        return patientRepository.findAll();
+        return patientRepository.findAllByOrderByCreatedAtDesc();
     }
 
     @Transactional(readOnly = true)
