@@ -1,21 +1,25 @@
 package api.pacientes.entity;
 
+import api.pacientes.entity.util.DatabaseObject;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.validator.constraints.UniqueElements;
 import org.hibernate.validator.constraints.br.CPF;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import java.time.LocalDate;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Patient {
+@Document
+public class Patient extends DatabaseObject {
 
     @Id
     private String id;
@@ -35,7 +39,8 @@ public class Patient {
     private String cpf;
 
     @NotEmpty(message = "A data de nascimento do paciente não foi informada")
-    private String birthDate;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "UTC")
+    private LocalDate birthDate;
 
     @NotNull(message = "Insira ao menos dos 3 campos de contato. Telefone, whatsapp ou e-mail")
     private Contact contact;
@@ -43,7 +48,7 @@ public class Patient {
     @NotNull(message = "O endereço do cliente não foi informado")
     private Address address;
 
-    public Patient(String firstName, String lastName, String gender, String cpf, String birthDate, Contact contact, Address address) {
+    public Patient(String firstName, String lastName, String gender, String cpf, LocalDate birthDate, Contact contact, Address address) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.gender = gender;
