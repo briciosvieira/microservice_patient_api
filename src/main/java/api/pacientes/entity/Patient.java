@@ -38,7 +38,7 @@ public class Patient extends DatabaseObject {
 //    @UniqueElements
     private String cpf;
 
-    @NotEmpty(message = "A data de nascimento do paciente não foi informada")
+    @NotNull(message = "A data de nascimento do paciente não foi informada")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "UTC")
     private LocalDate birthDate;
 
