@@ -29,12 +29,13 @@ class PatientControllerTest {
 
     @Autowired
     MockMvc mockMvc;
+
     @MockBean
     PatientService patientService;
 
     @Test
     @DisplayName("Deve retornar uma lista de pacientes cadastrados.")
-    void testObterTodos() throws Exception {
+    void should_findAllPatient_ExpectedOkAndCorrectData() throws Exception {
         // Arrange
         Patient patient1 = new Patient();
         patient1.setFirstName("Natã");
@@ -65,7 +66,7 @@ class PatientControllerTest {
 
     @Test
     @DisplayName("Deve retornar um Array vazio quando busca não retornar pacientes")
-    void testObterListaEmBranco() throws Exception {
+    void should_findAllPatient_ExpectedOkAndEmptyList() throws Exception {
         List<Patient> patients = new ArrayList<>();
 
         Mockito.when(patientService.getAll()).thenReturn(patients);
@@ -80,7 +81,7 @@ class PatientControllerTest {
 
     @Test
     @DisplayName("Deve retornar um Array vazio quando busca não retornar pacientes")
-    void testObterPeloId() throws Exception, ResourceNotFoundException {
+    void should_findByIdPatient_ExpectedOkAndCorrectData() throws Exception, ResourceNotFoundException {
         Patient patient = new Patient();
         patient.setId("teste");
         patient.setFirstName("Natã");
@@ -102,7 +103,7 @@ class PatientControllerTest {
 
     @Test
     @DisplayName("Deve retornar uma ResourceNotFoundException ao buscar um id inexistente")
-    void testObterPorUmIdInvalido() throws Exception, ResourceNotFoundException {
+    void should_findByIdPatientInvalid_ExpectedNotFound() throws Exception, ResourceNotFoundException {
         String id = "teste";
         Mockito.when(patientService.findById(id)).thenThrow(ResourceNotFoundException.class);
         mockMvc.perform(MockMvcRequestBuilders.get("/patient/" + id))
