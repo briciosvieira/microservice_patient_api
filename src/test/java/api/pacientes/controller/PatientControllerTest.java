@@ -41,7 +41,6 @@ class PatientControllerTest {
     @Test
     @DisplayName("Deve retornar uma lista de pacientes cadastrados.")
     void should_findAllPatient_ExpectedOkAndCorrectData() throws Exception {
-        // Arrange
         Patient patient1 = new Patient();
         patient1.setFirstName("Natã");
         patient1.setLastName("Ferreira");
@@ -55,16 +54,20 @@ class PatientControllerTest {
         patient2.setGender("F");
 
         List<Patient> patientList = Arrays.asList(patient1, patient2);
-        // Mock
+
         Mockito.when(patientService.getAll()).thenReturn(patientList);
-        // Action Assert
+
         mockMvc.perform(MockMvcRequestBuilders.get("/patient"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.length()").value(2))
                 .andExpect(MockMvcResultMatchers.jsonPath("$[0].firstName").value(patient1.getFirstName()))
-                .andExpect(MockMvcResultMatchers.jsonPath("$[0].lastName").value(patient1.getLastName()));
-        // Verify
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].lastName").value(patient1.getLastName()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].gender").value(patient1.getGender()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].cpf").value(patient1.getCpf()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].birthDate").value(patient1.getBirthDate().toString()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].contact").value(patient1.getContact()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].address").value(patient1.getAddress()));
 
         verify(patientService, times(1)).getAll();
     }
