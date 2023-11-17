@@ -33,7 +33,7 @@ Certifique-se de ter os seguintes pré-requisitos instalados em seu sistema:
 1. Configurar a Classe Principal:
     - Abra a classe principal do projeto: `src/main/java/api/pacientes/PatientApplication`.
     - Clique com o botão direito na classe e selecione "Run" para executar a aplicação.
-    - Realize uma requisição para o endpoint de mock: `http://localhost:8080/patient/mock-patients`
+    - Realize uma requisição para o endpoint de mock: `http://localhost:8081/patient/mock-patients`
 
 ## Testando a Aplicação
 
