@@ -18,6 +18,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import util.JsonHelper;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -104,7 +105,12 @@ class PatientControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.firstName").value(patient.getFirstName()))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.lastName").value(patient.getLastName()));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.lastName").value(patient.getLastName()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.gender").value(patient.getGender()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.cpf").value(patient.getCpf()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.birthDate").value(patient.getBirthDate().toString()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.contact").value(patient.getContact()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.address").value(patient.getAddress()));
 
         verify(patientService, times(1)).findById(patient.getId());
     }
@@ -119,14 +125,15 @@ class PatientControllerTest {
 
         verify(patientService, times(1)).findById(id);
     }
+
     @Test
     @DisplayName("Deve retornar valor vazio ao excluir um paciente")
-    void testExcluirPaciente() throws Exception, ResourceNotFoundException {
+    void should_deleteByIdPatient_ExpectedNoContent() throws Exception, ResourceNotFoundException {
         Patient patient = new Patient();
         patient.setId("teste");
         patient.setFirstName("Gabriel");
         patient.setLastName("Moreira");
-        patient.setBirthDate(String.valueOf(LocalDate.of(1999, 8, 17)));
+        patient.setBirthDate(LocalDate.of(1999, 8, 17));
         patient.setGender("M");
 
         Mockito.doNothing().when(patientService).delete(patient.getId());
@@ -139,11 +146,11 @@ class PatientControllerTest {
 
     @Test
     @DisplayName("Deve registrar um novo paciente")
-    void testRegisterPatient() throws Exception {
+    void should_createPatient_ExpectedCreatedAndCorrectData() throws Exception {
         Patient patient = new Patient();
         patient.setFirstName("Ivan");
         patient.setLastName("Romão");
-        patient.setBirthDate(String.valueOf(LocalDate.of(2023, 3, 10)));
+        patient.setBirthDate(LocalDate.of(2023, 3, 10));
         patient.setGender("M");
         patient.setCpf("76824616672");
 
@@ -166,14 +173,14 @@ class PatientControllerTest {
 
         mockMvc.perform(MockMvcRequestBuilders.post("/patient")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(new ObjectMapper().writeValueAsString(patient)))
+                .content(JsonHelper.toJson(patient)))
                 .andExpect(MockMvcResultMatchers.status().isCreated())
                 .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.firstName").value(patient.getFirstName()))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.lastName").value(patient.getLastName()))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.cpf").value(patient.getCpf()))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.gender").value(patient.getGender()))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.birthDate").value(patient.getBirthDate()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.birthDate").value(patient.getBirthDate().toString()))
 
                 .andExpect(MockMvcResultMatchers.jsonPath("$.address.street").value(address.getStreet()))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.address.county").value(address.getCounty()))
@@ -189,15 +196,14 @@ class PatientControllerTest {
         verify(patientService, times(1)).registerPatient(Mockito.any(Patient.class));
     }
 
-
     @Test
     @DisplayName("Deve atualizar um paciente")
-    void testUpdatePatient() throws Exception, ResourceNotFoundException {
+    void should_updatePatient_ExpectedOkAndCorrectData() throws Exception, ResourceNotFoundException {
         Patient patient = new Patient();
         patient.setId("testeId");
         patient.setFirstName("Ivan");
         patient.setLastName("Romão");
-        patient.setBirthDate(String.valueOf(LocalDate.of(2023, 3, 10)));
+        patient.setBirthDate(LocalDate.of(2023, 3, 10));
         patient.setGender("M");
         patient.setCpf("76824616672");
 
@@ -220,14 +226,14 @@ class PatientControllerTest {
 
         mockMvc.perform(MockMvcRequestBuilders.put("/patient/{id}", "testId")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(new ObjectMapper().writeValueAsString(patient)))
+                        .content(JsonHelper.toJson(patient)))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.firstName").value(patient.getFirstName()))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.lastName").value(patient.getLastName()))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.cpf").value(patient.getCpf()))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.gender").value(patient.getGender()))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.birthDate").value(patient.getBirthDate()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.birthDate").value(patient.getBirthDate().toString()))
 
                 .andExpect(MockMvcResultMatchers.jsonPath("$.address.street").value(address.getStreet()))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.address.county").value(address.getCounty()))
