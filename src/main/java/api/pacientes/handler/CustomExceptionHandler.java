@@ -1,5 +1,6 @@
-package api.pacientes.exception;
+package api.pacientes.handler;
 
+import api.pacientes.handler.exceptions.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;

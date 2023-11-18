@@ -1,4 +1,4 @@
-package api.pacientes.exception;
+package api.pacientes.handler.exceptions;
 
 public class ResourceNotFoundException extends Exception {
 

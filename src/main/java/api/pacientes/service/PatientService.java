@@ -3,7 +3,7 @@ package api.pacientes.service;
 import api.pacientes.entity.Address;
 import api.pacientes.entity.Contact;
 import api.pacientes.entity.Patient;
-import api.pacientes.exception.ResourceNotFoundException;
+import api.pacientes.handler.exceptions.ResourceNotFoundException;
 import api.pacientes.repository.PatientRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

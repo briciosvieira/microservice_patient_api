@@ -1,7 +1,7 @@
 package api.pacientes.controller;
 
 import api.pacientes.entity.Patient;
-import api.pacientes.exception.ResourceNotFoundException;
+import api.pacientes.handler.exceptions.ResourceNotFoundException;
 import api.pacientes.service.PatientService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
