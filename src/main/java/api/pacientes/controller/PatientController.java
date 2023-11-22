@@ -1,6 +1,7 @@
 package api.pacientes.controller;
 
 import api.pacientes.entity.Patient;
+import api.pacientes.handler.exceptions.DuplicatedCPFException;
 import api.pacientes.handler.exceptions.ResourceNotFoundException;
 import api.pacientes.service.PatientService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +30,7 @@ public class PatientController {
     }
 
     @PostMapping
-    public ResponseEntity<Patient> registerPatient(@RequestBody @Valid Patient patient){
+    public ResponseEntity<Patient> registerPatient(@RequestBody @Valid Patient patient) throws DuplicatedCPFException {
         return ResponseEntity.created(null).body(patientService.registerPatient(patient));
     }
 
@@ -40,14 +41,20 @@ public class PatientController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> delete(@PathVariable String id) throws ResourceNotFoundException {
+    public ResponseEntity<Void> delete(@PathVariable String id) throws ResourceNotFoundException {
         patientService.delete(id);
         return ResponseEntity.noContent().build();
     }
 
+    @DeleteMapping
+    public ResponseEntity<Void> deleteAll() throws ResourceNotFoundException {
+        patientService.deleteAll();
+        return ResponseEntity.noContent().build();
+    }
+
     @PutMapping("/{id}")
-    public ResponseEntity<?> update(@PathVariable String id, @RequestBody @Valid Patient patient) throws ResourceNotFoundException {
-        Patient patientUpdate = patientService.update(id,patient);
+    public ResponseEntity<?> update(@PathVariable String id, @RequestBody @Valid Patient patient) throws ResourceNotFoundException, DuplicatedCPFException {
+        Patient patientUpdate = patientService.update(id, patient);
         return ResponseEntity.ok(patientUpdate);
     }
 }

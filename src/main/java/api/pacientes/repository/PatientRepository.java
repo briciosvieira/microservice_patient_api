@@ -10,4 +10,7 @@ import java.util.List;
 public interface PatientRepository extends MongoRepository<Patient, String> {
 
     List<Patient> findAllByOrderByCreatedAtDesc();
+
+    Boolean existsPatientByCpf(String cpf);
+    Boolean existsPatientByCpfAndIdNot(String cpf, String id);
 }

@@ -3,6 +3,7 @@ package api.pacientes.service;
 import api.pacientes.entity.Address;
 import api.pacientes.entity.Contact;
 import api.pacientes.entity.Patient;
+import api.pacientes.handler.exceptions.DuplicatedCPFException;
 import api.pacientes.handler.exceptions.ResourceNotFoundException;
 import api.pacientes.repository.PatientRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,40 +22,23 @@ public class PatientService {
     @Autowired
     private PatientRepository patientRepository;
 
-    public Patient registerPatient(Patient patient) {
-        return patientRepository.insert(
-                Patient.builder()
-                        .firstName(patient.getFirstName())
-                        .lastName(patient.getLastName())
-                        .birthDate(patient.getBirthDate())
-                        .gender(patient.getGender())
-                        .cpf(patient.getCpf())
-                        .address(Address.builder()
-                                .state(patient.getAddress().getState())
-                                .county(patient.getAddress().getCounty())
-                                .zipCode(patient.getAddress().getZipCode())
-                                .street(patient.getAddress().getStreet())
-                                .number(patient.getAddress().getNumber())
-                                .neighborhood(patient.getAddress().getNeighborhood())
-                                .build())
-                        .contact(Contact.builder()
-                                .telephone(patient.getContact().getTelephone())
-                                .whatsapp(patient.getContact().getWhatsapp())
-                                .email(patient.getContact().getEmail())
-                                .build())
-                        .build()
-        );
+    public Patient registerPatient(Patient patient) throws DuplicatedCPFException {
+        patient.setCpf(cleanedCPF(patient.getCpf()));
+        if (patientRepository.existsPatientByCpf(patient.getCpf())) {
+            throw new DuplicatedCPFException();
+        }
+        return patientRepository.insert(patient);
     }
 
     public void mockPatients() {
         List<Patient> mockPatientList = Arrays.asList(
-                new Patient("João", "Silva", "M", "617.442.440-57", LocalDate.of(1990, 01, 01),  new Contact( "111111111", "911111111", "joao.silva@email.com"), new Address("1", "Centro", "São Paulo", "01001-001", "SP", "Rua A")),
-                new Patient("Maria", "Oliveira", "F", "934.735.220-90", LocalDate.of(1992, 02, 12), new Contact("111111112", "911111112", "maria.oliveira@email.com"), new Address("2", "Centro", "São Paulo", "01002-001", "SP", "Rua B")),
-                new Patient("Carlos", "Fernandes", "M", "080.624.135-78", LocalDate.of(1989, 03, 23), new Contact("111111113", "911111113", "carlos.fernandes@email.com"), new Address("3", "Centro", "São Paulo", "01003-001", "SP", "Rua C")),
-                new Patient("Ana", "Martins", "F", "859.048.950-70", LocalDate.of(1991, 04, 14), new Contact("111111114", "911111114", "ana.martins@email.com"), new Address("4", "Centro", "São Paulo", "01001-004", "SP", "Rua D")),
-                new Patient("Roberto", "Alves", "M", "428.389.460-56", LocalDate.of(1993, 05, 15), new Contact("111111115", "911111115", "roberto.alves@email.com"), new Address("5", "Centro", "São Paulo", "01005-001", "SP", "Rua E"))
+                new Patient("João", "Silva", "M", "61744244057", LocalDate.of(1990, 01, 01),  new Contact( "111111111", "911111111", "joao.silva@email.com"), new Address("1", "Centro", "São Paulo", "01001-001", "SP", "Rua A")),
+                new Patient("Maria", "Oliveira", "F", "93473522090", LocalDate.of(1992, 02, 12), new Contact("111111112", "911111112", "maria.oliveira@email.com"), new Address("2", "Centro", "São Paulo", "01002-001", "SP", "Rua B")),
+                new Patient("Carlos", "Fernandes", "M", "08062413578", LocalDate.of(1989, 03, 23), new Contact("111111113", "911111113", "carlos.fernandes@email.com"), new Address("3", "Centro", "São Paulo", "01003-001", "SP", "Rua C")),
+                new Patient("Ana", "Martins", "F", "85904895070", LocalDate.of(1991, 04, 14), new Contact("111111114", "911111114", "ana.martins@email.com"), new Address("4", "Centro", "São Paulo", "01001-004", "SP", "Rua D")),
+                new Patient("Roberto", "Alves", "M", "42838946056", LocalDate.of(1993, 05, 15), new Contact("111111115", "911111115", "roberto.alves@email.com"), new Address("5", "Centro", "São Paulo", "01005-001", "SP", "Rua E"))
         );
-        mockPatientList.forEach(this::registerPatient);
+        patientRepository.insert(mockPatientList);
     }
 
     @Transactional(readOnly = true)
@@ -67,21 +51,27 @@ public class PatientService {
         return getPatientOptionalById(id);
     }
 
-    public Patient update(String id, Patient newPatient) throws ResourceNotFoundException {
+    public Patient update(String id, Patient newPatient) throws ResourceNotFoundException, DuplicatedCPFException {
         Patient patient = getPatientOptionalById(id);
+        if (patientRepository.existsPatientByCpfAndIdNot(cleanedCPF(newPatient.getCpf()), id)) {
+            throw new DuplicatedCPFException();
+        }
         patient.setGender(newPatient.getGender());
         patient.setAddress(newPatient.getAddress());
         patient.setContact(newPatient.getContact());
-        patient.setCpf(newPatient.getCpf());
+        patient.setCpf(cleanedCPF(newPatient.getCpf()));
         patient.setBirthDate(newPatient.getBirthDate());
         patient.setFirstName(newPatient.getFirstName());
         patient.setLastName(newPatient.getLastName());
-
         return patientRepository.save(patient);
     }
 
     public void delete(String id) throws ResourceNotFoundException {
         patientRepository.delete(getPatientOptionalById(id));
+    }
+
+    public void deleteAll() {
+        patientRepository.deleteAll();
     }
 
     private Patient getPatientOptionalById(String id) throws ResourceNotFoundException {
@@ -92,5 +82,10 @@ public class PatientService {
         }
 
         return patientOptional.get();
+    }
+
+    private String cleanedCPF(String cpf) {
+        String cleanCpf = cpf.replaceAll("\\D", "");
+        return cleanCpf;
     }
 }

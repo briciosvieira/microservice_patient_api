@@ -1,6 +1,8 @@
 package api.pacientes.handler;
 
+import api.pacientes.handler.exceptions.DuplicatedCPFException;
 import api.pacientes.handler.exceptions.ResourceNotFoundException;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -36,9 +38,18 @@ public class CustomExceptionHandler {
         return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
     }
 
+    @ExceptionHandler(DuplicatedCPFException.class)
+    public ResponseEntity<Object> handleDuplicatedCPFException(DuplicatedCPFException ex) {
+        Map<String, Object> body = new HashMap<>();
+
+        body.put("mensagem", ex.getMessage());
+
+        return new ResponseEntity<>(body, HttpStatus.UNPROCESSABLE_ENTITY);
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Object> handleAllExceptions(Exception ex) {
-        if (ex instanceof MethodArgumentNotValidException || ex instanceof ResourceNotFoundException) {
+        if (ex instanceof MethodArgumentNotValidException || ex instanceof ResourceNotFoundException || ex instanceof DuplicateKeyException) {
             return null;
         }
 

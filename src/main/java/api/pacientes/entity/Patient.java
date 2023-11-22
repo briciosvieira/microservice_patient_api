@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.br.CPF;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.validation.constraints.NotEmpty;
@@ -35,6 +36,7 @@ public class Patient extends DatabaseObject {
 
     @CPF(message = "O CPF informado está inválido")
     @NotEmpty(message = "O CPF do paciente não foi informado")
+    @Indexed(unique = true)
     private String cpf;
 
     @NotNull(message = "A data de nascimento do paciente não foi informada")
