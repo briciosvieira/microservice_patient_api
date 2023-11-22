@@ -12,6 +12,8 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.PastOrPresent;
+import javax.validation.constraints.Pattern;
 import java.time.LocalDate;
 
 @Data
@@ -31,6 +33,10 @@ public class Patient extends DatabaseObject {
     private String lastName;
 
     @NotEmpty(message = "O gênero do paciente não foi informado")
+    @Pattern(
+            regexp = "^(M|F)$",
+            message = "O genero deve ser 'M' ou 'F'"
+    )
     private String gender;
 
     @CPF(message = "O CPF informado está inválido")
@@ -39,6 +45,7 @@ public class Patient extends DatabaseObject {
 
     @NotNull(message = "A data de nascimento do paciente não foi informada")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "UTC")
+    @PastOrPresent
     private LocalDate birthDate;
 
     @NotNull(message = "Insira ao menos dos 3 campos de contato. Telefone, whatsapp ou e-mail")
