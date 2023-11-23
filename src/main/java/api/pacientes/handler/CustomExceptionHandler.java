@@ -1,6 +1,7 @@
 package api.pacientes.handler;
 
 import api.pacientes.handler.exceptions.DuplicatedCPFException;
+import api.pacientes.handler.exceptions.RegisterBadRequestException;
 import api.pacientes.handler.exceptions.ResourceNotFoundException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
@@ -59,5 +60,14 @@ public class CustomExceptionHandler {
                 " contato pelo nosso WhatsApp 71 99999-9999. Lamentamos o ocorrido!");
 
         return new ResponseEntity<>(body, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler(RegisterBadRequestException.class)
+    public ResponseEntity<Object> handleRegisterBadRequest(RegisterBadRequestException ex) {
+        Map<String, Object> body = new HashMap<>();
+
+        body.put("mensagem", ex.getMessage());
+
+        return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
     }
 }

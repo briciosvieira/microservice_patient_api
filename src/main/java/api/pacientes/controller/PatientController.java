@@ -2,6 +2,7 @@ package api.pacientes.controller;
 
 import api.pacientes.entity.Patient;
 import api.pacientes.handler.exceptions.DuplicatedCPFException;
+import api.pacientes.handler.exceptions.RegisterBadRequestException;
 import api.pacientes.handler.exceptions.ResourceNotFoundException;
 import api.pacientes.service.PatientService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +31,7 @@ public class PatientController {
     }
 
     @PostMapping
-    public ResponseEntity<Patient> registerPatient(@RequestBody @Valid Patient patient) throws DuplicatedCPFException {
+    public ResponseEntity<Patient> registerPatient(@RequestBody @Valid Patient patient) throws DuplicatedCPFException, RegisterBadRequestException {
         return ResponseEntity.created(null).body(patientService.registerPatient(patient));
     }
 
@@ -53,7 +54,7 @@ public class PatientController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> update(@PathVariable String id, @RequestBody @Valid Patient patient) throws ResourceNotFoundException, DuplicatedCPFException {
+    public ResponseEntity<?> update(@PathVariable String id, @RequestBody @Valid Patient patient) throws ResourceNotFoundException, DuplicatedCPFException, RegisterBadRequestException {
         Patient patientUpdate = patientService.update(id, patient);
         return ResponseEntity.ok(patientUpdate);
     }

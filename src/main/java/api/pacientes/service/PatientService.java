@@ -4,6 +4,7 @@ import api.pacientes.entity.Address;
 import api.pacientes.entity.Contact;
 import api.pacientes.entity.Patient;
 import api.pacientes.handler.exceptions.DuplicatedCPFException;
+import api.pacientes.handler.exceptions.RegisterBadRequestException;
 import api.pacientes.handler.exceptions.ResourceNotFoundException;
 import api.pacientes.repository.PatientRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,12 +23,34 @@ public class PatientService {
     @Autowired
     private PatientRepository patientRepository;
 
-    public Patient registerPatient(Patient patient) throws DuplicatedCPFException {
+    public Patient registerPatient(Patient patient) throws DuplicatedCPFException, RegisterBadRequestException {
+        validateIfContactIsAvailable(patient);
+
         patient.setCpf(cleanedCPF(patient.getCpf()));
         if (patientRepository.existsPatientByCpf(patient.getCpf())) {
             throw new DuplicatedCPFException();
         }
         return patientRepository.insert(patient);
+    }
+
+    private void validateIfContactIsAvailable(Patient patient) throws RegisterBadRequestException {
+        Contact contact = patient.getContact();
+        if (
+                (
+                        contact.getEmail() == null ||
+                        contact.getEmail() == ""
+                ) &&
+                (
+                        contact.getTelephone() == null ||
+                        contact.getTelephone() == ""
+                ) &&
+                (
+                        contact.getWhatsapp() == null ||
+                        contact.getWhatsapp() == ""
+                )
+        ) {
+            throw new RegisterBadRequestException("Informe ao menos uma forma de contato: E-mail, Telefone e/ou Whatsapp");
+        }
     }
 
     public void mockPatients() {
@@ -51,7 +74,9 @@ public class PatientService {
         return getPatientOptionalById(id);
     }
 
-    public Patient update(String id, Patient newPatient) throws ResourceNotFoundException, DuplicatedCPFException {
+    public Patient update(String id, Patient newPatient) throws ResourceNotFoundException, DuplicatedCPFException, RegisterBadRequestException {
+        validateIfContactIsAvailable(newPatient);
+
         Patient patient = getPatientOptionalById(id);
         if (patientRepository.existsPatientByCpfAndIdNot(cleanedCPF(newPatient.getCpf()), id)) {
             throw new DuplicatedCPFException();

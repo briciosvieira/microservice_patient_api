@@ -33,7 +33,7 @@ public class Address {
     )
     private String state;
 
-    @NotEmpty(message = "O rua do endereço do paciente não foi informado")
+    @NotEmpty(message = "A rua do endereço do paciente não foi informado")
     private String street;
 
 }

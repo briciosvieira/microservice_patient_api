@@ -157,7 +157,7 @@ class PatientControllerTest {
         address.setNeighborhood("Sample Neighborhood");
         address.setCounty("Sample County");
         address.setZipCode("12345");
-        address.setState("Sample State");
+        address.setState("RJ");
         address.setStreet("Sample Street");
 
         Contact contact = new Contact();
@@ -210,7 +210,7 @@ class PatientControllerTest {
         address.setNeighborhood("Sample Neighborhood");
         address.setCounty("Sample County");
         address.setZipCode("12345");
-        address.setState("Sample State");
+        address.setState("BA");
         address.setStreet("Sample Street");
 
         Contact contact = new Contact();

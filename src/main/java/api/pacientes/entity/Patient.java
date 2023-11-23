@@ -11,10 +11,8 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.PastOrPresent;
-import javax.validation.constraints.Pattern;
+import javax.validation.Valid;
+import javax.validation.constraints.*;
 import java.time.LocalDate;
 
 @Data
@@ -53,6 +51,7 @@ public class Patient extends DatabaseObject {
     @NotNull(message = "Insira ao menos dos 3 campos de contato. Telefone, whatsapp ou e-mail")
     private Contact contact;
 
+    @Valid
     @NotNull(message = "O endereço do cliente não foi informado")
     private Address address;
 
