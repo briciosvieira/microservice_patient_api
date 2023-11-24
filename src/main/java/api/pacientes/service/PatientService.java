@@ -26,10 +26,37 @@ public class PatientService {
     public Patient registerPatient(Patient patient) throws DuplicatedCPFException, RegisterBadRequestException {
         validateIfContactIsAvailable(patient);
 
-        patient.setCpf(cleanedCPF(patient.getCpf()));
-        if (patientRepository.existsPatientByCpf(patient.getCpf())) {
+        patient.setCpf(cleanedCPF(patient.getCpf().trim()));
+        if (patientRepository.existsPatientByCpf(patient.getCpf().trim())) {
             throw new DuplicatedCPFException();
         }
+
+        Address address = patient.getAddress();
+        address.setNumber(address.getNumber().trim());
+        address.setNeighborhood(address.getNeighborhood().trim());
+        address.setCounty(address.getCounty().trim());
+        address.setZipCode(address.getZipCode().trim());
+        address.setState(address.getState().trim());
+        address.setStreet(address.getStreet().trim());
+
+        Contact contact = patient.getContact();
+
+        if (contact.getTelephone() != null) {
+            contact.setTelephone(contact.getTelephone().trim());
+        }
+
+        if (contact.getEmail() != null) {
+            contact.setEmail(contact.getEmail().trim());
+        }
+
+        if (contact.getWhatsapp() != null) {
+            contact.setWhatsapp(contact.getWhatsapp().trim());
+        }
+
+        patient.setCpf(patient.getCpf().trim());
+        patient.setFirstName(patient.getFirstName().trim());
+        patient.setLastName(patient.getLastName().trim());
+
         return patientRepository.insert(patient);
     }
 
@@ -78,16 +105,38 @@ public class PatientService {
         validateIfContactIsAvailable(newPatient);
 
         Patient patient = getPatientOptionalById(id);
-        if (patientRepository.existsPatientByCpfAndIdNot(cleanedCPF(newPatient.getCpf()), id)) {
+        if (patientRepository.existsPatientByCpfAndIdNot(cleanedCPF(newPatient.getCpf().trim()), id)) {
             throw new DuplicatedCPFException();
         }
+        Address address = newPatient.getAddress();
+        address.setNumber(address.getNumber().trim());
+        address.setNeighborhood(address.getNeighborhood().trim());
+        address.setCounty(address.getCounty().trim());
+        address.setZipCode(address.getZipCode().trim());
+        address.setState(address.getState().trim());
+        address.setStreet(address.getStreet().trim());
+
+        Contact contact = newPatient.getContact();
+
+        if (contact.getTelephone() != null) {
+            contact.setTelephone(contact.getTelephone().trim());
+        }
+
+        if (contact.getEmail() != null) {
+            contact.setEmail(contact.getEmail().trim());
+        }
+
+        if (contact.getWhatsapp() != null) {
+            contact.setWhatsapp(contact.getWhatsapp().trim());
+        }
+
         patient.setGender(newPatient.getGender());
-        patient.setAddress(newPatient.getAddress());
-        patient.setContact(newPatient.getContact());
+        patient.setAddress(address);
+        patient.setContact(contact);
         patient.setCpf(cleanedCPF(newPatient.getCpf()));
         patient.setBirthDate(newPatient.getBirthDate());
-        patient.setFirstName(newPatient.getFirstName());
-        patient.setLastName(newPatient.getLastName());
+        patient.setFirstName(newPatient.getFirstName().trim());
+        patient.setLastName(newPatient.getLastName().trim());
         return patientRepository.save(patient);
     }
 
